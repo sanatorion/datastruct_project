@@ -1,6 +1,9 @@
 def printStatus(player):
     for key, value in player.items():
-        print(f"{key.capitalize()}: {'(' if key == "name" else ''}{value}{')' if key == "name" else ''}")
+        if key == 'name':
+            print(f"{key.capitalize()}: ({value})")
+        else:
+            print(f"{key.capitalize()}: {value}")
 
 #return energy cost, damage, heal
 def dodge():
@@ -15,19 +18,18 @@ def vampiricClaws():
 def drainLife():
     return 13, 6, 10
 
-def applyEffects(attacker, target, attackerMove, targetMove, energy, damage, heal):
-    print(f"{attacker['name']} uses {energy} energy."); attacker["energy"] -= energy
+def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
+    print(f"{attacker['name']} uses {energyVal} energy."); attacker['energy'] -= energyVal
 
     if targetMove == "c":
-        energy = dodge()
-        print(f"{target['name']} uses {energy} energy to dodge and receives no damage"); target["energy"] -= energy
+        print(f"{target['name']} uses {dodge()} energy to dodge and receives no damage"); target['energy'] -= dodge()
         return
     
-    print(f"{target['name']} received {damage} damage"); target["health"] -= damage
+    print(f"{target['name']} received {damageVal} damage"); target['health'] -= damageVal
 
-    if(attackerMove == "d"):
-        print(f"{attacker['name']} gains {heal} health"); attacker["health"] += heal
-    
+    if attackerMove == "c":
+        print(f"{attacker['name']} gains {healVal} health"); attacker['health'] += healVal
+
 
 def moveEffects(attackerMove, targetMove, attacker, target):
     if attackerMove == "a":
@@ -59,10 +61,10 @@ player2 = {
     "energy": 50,
 }
 
-print(f"\nLet the duel between {player1["name"]} and {player2["name"]} begin!")
+print(f"\nLet the duel between {player1['name']} and {player2['name']} begin!")
 
 night = 1
-while(player1["health"] > 0 and player2["health"] > 0):
+while(player1['health'] > 0 and player2['health'] > 0):
     print(f"=== Night {night} ===\n==========")
     print("Player Status\n----------")
     printStatus(player1); print("----------")
@@ -75,12 +77,15 @@ while(player1["health"] > 0 and player2["health"] > 0):
     "\nD. Drain Life (deals 6 damage then heals self by 10; energy: 13)" \
     "\nE. Do nothing (energy: 0)\n")
 
-    player1Move = input(f"Player 1 ({player1["name"]}), choose your move: ").lower()
-    player2Move = input(f"Player 2 ({player2["name"]}), choose your move: ").lower()
+    player1Move = input(f"Player 1 ({player1['name']}), choose your move: ").lower()
+    player2Move = input(f"Player 2 ({player2['name']}), choose your move: ").lower()
 
     print("\nMove Effects:")
+    if not player1Move == 'c': print("----------")
     moveEffects(player1Move, player2Move, player1, player2)
+    if not player1Move == 'c': print("----------")
     moveEffects(player2Move, player1Move, player2, player1)
+    
 
     input("\n\nPress Enter to continue...")
     night += 1
