@@ -39,8 +39,8 @@ def rest(player):
     player['energy'] += 13 if player['energy'] == 0 else 20
 
 def getValidInput(player):
-    choices = list(moveEnergy.keys)
-    
+    choices = list(moveEnergy.keys())
+
     loop = True
     if player['energy'] != 0:
         while(loop):
