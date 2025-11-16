@@ -40,7 +40,6 @@ def rest(player):
 
 def getValidInput(player):
     choices = list(moveEnergy.keys())
-
     loop = True
     if player['energy'] != 0:
         while(loop):
