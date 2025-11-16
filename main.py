@@ -2,9 +2,9 @@ def printStatus(player):
     for key, value in player.items():
         if key != 'pcount':
             if key == 'name':
-                print(f"{key}: ({value})")
+                print(f"{key.capitalize()}: ({value})")
             else:
-                print(f"{key}: {value}")
+                print(f"{key.capitalize()}: {value}")
         
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
