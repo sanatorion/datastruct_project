@@ -1,96 +1,131 @@
 def printStatus(player):
     for key, value in player.items():
-        if key == 'name':
-            print(f"{key.capitalize()}: ({value})")
-        else:
-            print(f"{key.capitalize()}: {value}")
-
-#return energy cost, damage, heal
-def dodge():
-    return 10 
-
-def daggerSlash():
-    return 6, 10 
-
-def vampiricClaws():
-    return 25, 40
-
-def drainLife():
-    return 13, 6, 10
-
+        if key != 'pcount':
+            if key == 'name':
+                print(f"{key}: ({value})")
+            else:
+                print(f"{key}: {value}")
+        
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
-    print(f"{attacker['name']} uses {energyVal} energy."); attacker['energy'] -= energyVal
+    damageVal = 0 if targetMove == 'C' else damageVal
+    print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy."); attacker['energy'] -= energyVal
+    print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage."); target['health'] -= damageVal
 
-    if targetMove == "c":
-        print(f"{target['name']} uses {dodge()} energy to dodge and receives no damage"); target['energy'] -= dodge()
-        return
-    
-    print(f"{target['name']} received {damageVal} damage"); target['health'] -= damageVal
+    if attackerMove == 'D' and targetMove != 'C':
+        print(f"Player {attacker['pcount']} ({attacker['name']}) gains {healVal} health."); attacker['health'] += healVal
 
-    if attackerMove == "d":
-        print(f"{attacker['name']} gains {healVal} health"); attacker['health'] += healVal
-
+moveEnergy = {'A': 6, 'B': 25, 'C': 10, 'D': 13, "E": 0}
 def moveEffects(attackerMove, targetMove, attacker, target):
-    if attackerMove == "a":
-        applyEffects(attacker, target, attackerMove, targetMove, *daggerSlash(), None)
-    elif attackerMove == "b":
-        applyEffects(attacker, target, attackerMove, targetMove, *vampiricClaws(), None)
-    elif attackerMove == "d":
-        applyEffects(attacker, target, attackerMove, targetMove, *drainLife())
-    elif attackerMove == "e":
-        print(f"{attacker['name']} does nothing.")
+    match attackerMove:
+        case 'A': #dagger slash
+            applyEffects(attacker, target, attackerMove, targetMove, moveEnergy['A'], 10, 0) 
+        case 'B': #vampiric claws
+            applyEffects(attacker, target, attackerMove, targetMove, moveEnergy['B'], 40, 0)
+        case 'C': #dodge
+            applyEffects(attacker, target, attackerMove, targetMove, moveEnergy['C'], 0, 0)
+        case 'D': #drain life
+            applyEffects(attacker, target, attackerMove, targetMove, moveEnergy['D'], 6, 10)
+        case 'E': #do nothing
+            print(f"Player {attacker['pcount']} ({attacker['name']}) chooses to do nothing.")
 
-#Main
-print("Welcome Vampire Spawn!")
-print("Fight for the right to ascend into a Vampire lord")
-print("Attempt to knockout your opponent.")
-print("Use your vampiric moves to outsmart your opponent.")
+def rest(player):
+    if player['energy'] == 0:
+        print(f"Player {player['pcount']} ({player['name']}) is too tired, and can only rest partially...")
+        print(f"Player {player['pcount']} ({player['name']}) heals for 20 and replenishes 13 energy.")
+    else:
+        print(f"Player {player['pcount']} ({player['name']}) is able to have a complete rest.")
+        print(f"Player {player['pcount']} ({player['name']}) heals for 25 and replenishes 20 energy.")
+    player['health'] += 20 if player['energy'] == 0 else 25
+    player['energy'] += 13 if player['energy'] == 0 else 20
 
-print("\nPlayers enter your names...")
+def getValidInput(player):
+    choices = []
+    for key in moveEnergy:
+        choices.append(key)
+    
+    loop = True
+    if player['energy'] != 0:
+        while(loop):
+            loop = False
+            playerInput = input(f"Player {player['pcount']} ({player['name']}): ")
 
-player1 = {
-    "name": input("Player 1: "),
-    "health": 100,
-    "energy": 50,
-}
+            if playerInput in choices and player['energy'] < moveEnergy[playerInput]:
+                print("Not enough energy to use that move.\n")
+                loop = True
 
-player2 = {
-    "name": input("Player 2: "),
-    "health": 100,
-    "energy": 50,
-}
+            if playerInput not in choices:
+                print("Only A, B, C, D, or E is allowed.\n")
+                loop = True
+    else:
+        input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
+    return playerInput
 
-print(f"\nLet the duel between {player1['name']} and {player2['name']} begin!")
+#main
+playAgain = "Y"
+while playAgain == 'Y':
+    print("Welcome Vampire Spawn!\n")
+    print("Fight for the right to ascend into a Vampire lord")
+    print("Attempt to knockout your opponent.")
+    print("Use your vampiric moves to outsmart your opponent.")
+    print("\nPlayers enter your names...")
+    player1 = {
+        "name": input("Player 1: "),
+        "health": 100,
+        "energy": 50,
+        "pcount": 1
+    }
+    player2 = {
+        "name": input("Player 2: "),
+        "health": 100,
+        "energy": 50,
+        "pcount": 2
+    }
+    print(f"\nLet the duel between {player1['name']} and {player2['name']} begin!\n")
 
-night = 1
-while(player1['health'] > 0 and player2['health'] > 0):
-    print(f"=== Night {night} ===\n==========")
+    night = 0
+    while player1['health'] > 0 and player2['health'] > 0:
+        if night > 0 and night % 3 == 0:
+            print("3 nights have passed. Both vampire spawns shall rest...")
+            rest(player1)
+            print("----------")
+            rest(player2)
+        
+            input("\nPress any key to continue...")
+            print()
+        night += 1
+        print(f"=== Night {night} ===\n==========")
+        print("Player Status\n----------")
+        printStatus(player1); print("----------")
+        printStatus(player2); print("==========")
+
+        print("\nAvailable Moves:" \
+        "\nA. Dagger Slash (10 damage; energy: 6)" \
+        "\nB. Vampiric Claws (40 damage; energy: 25)" \
+        "\nC. Dodge: Bat Form (nullifies incoming attack; energy: 10)" \
+        "\nD. Drain Life (deals 6 damage then heals self by 10; energy: 13)" \
+        "\nE. Do nothing (energy: 0)\n")
+
+        print("Players, what are your moves? \nPlease enter A, B, C, D, or, E only")
+        player1Move = getValidInput(player1)
+        player2Move = getValidInput(player2)
+
+        print("\nMove Effects:")
+        moveEffects(player1Move, player2Move, player1, player2)
+        print("----------")
+        moveEffects(player2Move, player1Move, player2, player1)
+
+        input("\nPress any key to continue...")
+        print()
+
+    print("==========")
     print("Player Status\n----------")
     printStatus(player1); print("----------")
     printStatus(player2); print("==========")
 
-    print("\nAvailable Moves:" \
-    "\nA. Dagger Slash (10 damage; energy: 6)" \
-    "\nB. Vampiric Claws (40 damage; energy: 25)" \
-    "\nC. Dodge: Bat Form (nullifies incoming attack; energy: 10)" \
-    "\nD. Drain Life (deals 6 damage then heals self by 10; energy: 13)" \
-    "\nE. Do nothing (energy: 0)\n")
+    if player1['health'] > player2['health']:
+        print(f"Player 1 ({player1['name']}) wins! Player 1 ascends to a Vampire Lord...")
+    else:
+        print(f"Player 2 ({player2['name']}) wins! Player 2 ascends to a Vampire Lord...")
 
-    player1Move = input(f"Player 1 ({player1['name']}), choose your move: ").lower()
-    player2Move = input(f"Player 2 ({player2['name']}), choose your move: ").lower()
-
-    print("\nMove Effects:")
-    moveEffects(player1Move, player2Move, player1, player2)
-    if not (player1Move == 'c' or player2Move == 'c'): print("----------")
-    moveEffects(player2Move, player1Move, player2, player1)
-    
-
-    input("\n\nPress Enter to continue...")
-    night += 1
-
-#not done yet
-#things to add:
-#rest per 3 nights
-#winner announcement
-#update text prompts
-#error handling
+    print("\nWould you like to Play Again?")
+    playAgain = input("Type (Y) to Play Again: ")
