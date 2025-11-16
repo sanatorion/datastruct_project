@@ -39,6 +39,14 @@ def drainLife(player, opponent, dodged):
         print(f"{player['name']} gains 10 health.")
         opponent["health"] -= 6
         player["health"] += 10
+        
+        
+def applyDamage(target, targetMove, damage):
+	if(targetMove == "c"):
+		print(f"{target['name']} receives no damage")
+		return
+	
+	print(f"{target['name']} received {damage} damage")
 
 def moveEffects(playerMove, opponentMove, player, opponent):
     if playerMove.lower() == "a":
