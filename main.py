@@ -2,61 +2,42 @@ def printStatus(player):
     for key, value in player.items():
         print(f"{key.capitalize()}: {'(' if key == "name" else ''}{value}{')' if key == "name" else ''}")
 
-def dodge(player):
-    print(f"{player['name']} uses 10 energy to dodge.")
-    player["energy"] -= 10
+#return energy cost, damage, heal
+def dodge():
+    return 10 
 
-def daggerSlash(player, opponent, dodged):
-    print(f"{player['name']} uses 6 energy.")
-    player["energy"] -= 6
+def daggerSlash():
+    return 6, 10 
 
-    if dodged:
-        dodge(opponent)
+def vampiricClaws():
+    return 25, 40
+
+def drainLife():
+    return 13, 6, 10
+
+def applyEffects(attacker, target, attackerMove, targetMove, energy, damage, heal):
+    print(f"{attacker['name']} uses {energy} energy."); attacker["energy"] -= energy
+
+    if targetMove == "c":
+        energy = dodge()
+        print(f"{target['name']} uses {energy} energy to dodge and receives no damage"); target["energy"] -= energy
+        return
     
-    print(f"{opponent['name']} received {'no' if dodged else '10'} damage.")
-    opponent["health"] -= 10 if not dodged else 0
+    print(f"{target['name']} received {damage} damage"); target["health"] -= damage
 
-def vampiricClaws(player, opponent, dodged):
-    print(f"{player['name']} uses 25 energy.")
-    player["energy"] -= 25
-
-    if dodged:
-        dodge(opponent)
+    if(attackerMove == "d"):
+        print(f"{attacker['name']} gains {heal} health"); attacker["health"] += heal
     
-    print(f"{opponent['name']} received {'no' if dodged else '40'} damage.")
-    opponent["health"] -= 40 if not dodged else 0
 
-def drainLife(player, opponent, dodged):
-    print(f"{player['name']} uses 13 energy.")
-    player["energy"] -= 13
-
-    if dodged:
-        dodge(opponent)
-
-    print(f"{opponent['name']} received {'no' if dodged else '6'} damage.")
-
-    if not dodged:
-        print(f"{player['name']} gains 10 health.")
-        opponent["health"] -= 6
-        player["health"] += 10
-        
-        
-def applyDamage(target, targetMove, damage):
-	if(targetMove == "c"):
-		print(f"{target['name']} receives no damage")
-		return
-	
-	print(f"{target['name']} received {damage} damage")
-
-def moveEffects(playerMove, opponentMove, player, opponent):
-    if playerMove.lower() == "a":
-        daggerSlash(player, opponent, opponentMove.lower() == "c")
-    elif playerMove.lower() == "b":
-        vampiricClaws(player, opponent, opponentMove.lower() == "c")
-    elif playerMove.lower() == "d":
-        drainLife(player, opponent, opponentMove.lower() == "c")
-    elif playerMove.lower() == "e":
-        print(f"{player['name']} does nothing.")
+def moveEffects(attackerMove, targetMove, attacker, target):
+    if attackerMove == "a":
+        applyEffects(attacker, target, attackerMove, targetMove, *daggerSlash(), None)
+    elif attackerMove == "b":
+        applyEffects(attacker, target, attackerMove, targetMove, *vampiricClaws(), None)
+    elif attackerMove == "d":
+        applyEffects(attacker, target, attackerMove, targetMove, *drainLife())
+    elif attackerMove == "e":
+        print(f"{attacker['name']} does nothing.")
 
 #Main
 print("Welcome Vampire Spawn!")
@@ -94,8 +75,8 @@ while(player1["health"] > 0 and player2["health"] > 0):
     "\nD. Drain Life (deals 6 damage then heals self by 10; energy: 13)" \
     "\nE. Do nothing (energy: 0)\n")
 
-    player1Move = input(f"Player 1 ({player1["name"]}), choose your move: ")
-    player2Move = input(f"Player 2 ({player2["name"]}), choose your move: ")
+    player1Move = input(f"Player 1 ({player1["name"]}), choose your move: ").lower()
+    player2Move = input(f"Player 2 ({player2["name"]}), choose your move: ").lower()
 
     print("\nMove Effects:")
     moveEffects(player1Move, player2Move, player1, player2)
