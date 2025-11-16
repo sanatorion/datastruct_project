@@ -53,9 +53,9 @@ def getValidInput(player):
             if playerInput not in choices:
                 print("Only A, B, C, D, or E is allowed.\n")
                 loop = True
+        return playerInput
     else:
         input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
-    return playerInput
 
 #main
 playAgain = "Y"
