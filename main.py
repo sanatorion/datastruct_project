@@ -27,9 +27,8 @@ def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVa
     
     print(f"{target['name']} received {damageVal} damage"); target['health'] -= damageVal
 
-    if attackerMove == "c":
+    if attackerMove == "d":
         print(f"{attacker['name']} gains {healVal} health"); attacker['health'] += healVal
-
 
 def moveEffects(attackerMove, targetMove, attacker, target):
     if attackerMove == "a":
@@ -81,9 +80,8 @@ while(player1['health'] > 0 and player2['health'] > 0):
     player2Move = input(f"Player 2 ({player2['name']}), choose your move: ").lower()
 
     print("\nMove Effects:")
-    if not player1Move == 'c': print("----------")
     moveEffects(player1Move, player2Move, player1, player2)
-    if not player1Move == 'c': print("----------")
+    if not (player1Move == 'c' or player2Move == 'c'): print("----------")
     moveEffects(player2Move, player1Move, player2, player1)
     
 
@@ -95,3 +93,4 @@ while(player1['health'] > 0 and player2['health'] > 0):
 #rest per 3 nights
 #winner announcement
 #update text prompts
+#error handling
