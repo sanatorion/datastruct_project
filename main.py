@@ -1,8 +1,8 @@
 moves = { 
     #name: energy, damage, heal
-    "daggerSlash": [6, 10],
-    "vampiricClaws": [25, 40],
-    "dodge": 10,
+    "daggerSlash": [6, 10,0],
+    "vampiricClaws": [25, 40, 0],
+    "dodge": {10, 0, 0},
     "drain":[13, 6, 10]
 }
 
@@ -37,11 +37,11 @@ def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVa
 def moveEffects(attackerMove, targetMove, attacker, target):
     match attackerMove:
         case 'A': #dagger slash
-            applyEffects(attacker, target, attackerMove, targetMove, *moves['daggerSlash'], 0) 
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['daggerSlash']) 
         case 'B': #vampiric claws
-            applyEffects(attacker, target, attackerMove, targetMove, *moves['vampiricClaws'], 0)
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['vampiricClaws'])
         case 'C': #dodge
-            applyEffects(attacker, target, attackerMove, targetMove, moves['dodge'], 0, 0)
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['dodge'])
         case 'D': #drain life
             applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'])
         case 'E': #do nothing
@@ -112,7 +112,7 @@ while playAgain == 'Y':
         print("\nAvailable Moves:")
         print(f"A. Dagger Slash ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})")
         print(f"B. Vampiric Claws ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})")
-        print(f"C. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge']})")
+        print(f"C. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge'][0]})")
         print(f"D. Drain Life (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})")
         print("E. Do nothing (energy: 0)\n")
 
