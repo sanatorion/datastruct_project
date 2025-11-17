@@ -59,16 +59,13 @@ def rest(player):
 
 def getValidInput(player):
     choices = ['A', 'B', 'C', 'D', 'E']
-    loop = True
-    if player['energy'] != 0:
-        while(loop):
-            loop = False
-            playerInput = input(f"Player {player['pcount']} ({player['name']}): ")
 
-            if playerInput not in choices:
-                print("Only A, B, C, D, or E is allowed.\n")
-                loop = True
-        return playerInput
+    if player['energy'] != 0:
+        while(True):
+            playerInput = input(f"Player {player['pcount']} ({player['name']}): ")
+            if playerInput in choices: 
+                return playerInput
+            print("Only A, B, C, D, or E is allowed.\n")
     else:
         input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
         return 'E'
