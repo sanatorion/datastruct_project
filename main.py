@@ -19,7 +19,6 @@ def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVa
 
     print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
     print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage.")
-    old = attacker['energy']
 
     attacker['energy'] = 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
     target['health'] -= damageVal
