@@ -45,7 +45,7 @@ def moveEffects(attackerMove, targetMove, attacker, target):
         case 'D': #drain life
             applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'])
         case 'E': #do nothing
-            print(f"Player {attacker['pcount']} ({attacker['name']}) chooses to do nothing.")
+            print(f"Player {attacker['pcount']} ({attacker['name']}) does nothing.")
 
 def rest(player):
     if player['energy'] == 0:
@@ -71,6 +71,7 @@ def getValidInput(player):
         return playerInput
     else:
         input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
+        return 'E'
 
 #main
 playAgain = "Y"
@@ -119,11 +120,10 @@ while playAgain == 'Y':
         player1Move = getValidInput(player1)
         player2Move = getValidInput(player2)
 
-        if player1Move != None and player2Move != None:
-            print("\nMove Effects:")
-            moveEffects(player1Move, player2Move, player1, player2)
-            if player1Move != None or player2Move != None: print("----------")
-            moveEffects(player2Move, player1Move, player2, player1)
+        print("\nMove Effects:")
+        moveEffects(player1Move, player2Move, player1, player2)
+        print("----------")
+        moveEffects(player2Move, player1Move, player2, player1)
 
         input("\nPress any key to continue...")
         print()
