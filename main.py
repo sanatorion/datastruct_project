@@ -13,13 +13,21 @@ def printStatus(player):
                 print(f"{key.capitalize()}: ({value})")
             else:
                 print(f"{key.capitalize()}: {value}")
+
+def printBothStats(player1, player2):
+    print("==========")
+    print("Player Status\n----------")
+    printStatus(player1)
+    print("----------")
+    printStatus(player2)
+    print("==========")
+
         
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
 
     print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
     print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage.")
-
     attacker['energy'] = 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
     target['health'] -= damageVal
 
@@ -98,17 +106,15 @@ while playAgain == 'Y':
             input("\nPress any key to continue...")
             print()
         night += 1
-        print(f"=== Night {night} ===\n==========")
-        print("Player Status\n----------")
-        printStatus(player1); print("----------")
-        printStatus(player2); print("==========")
+        print(f"=== Night {night} ===")
+        printBothStats(player1, player2)
 
-        print("\nAvailable Moves:" \
-        f"\nA. Dagger Slash ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})" \
-        f"\nB. Vampiric Claws ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})" \
-        f"\nC. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge']})" \
-        f"\nD. Drain Life (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})" \
-        "\nE. Do nothing (energy: 0)\n")
+        print("\nAvailable Moves:")
+        print(f"A. Dagger Slash ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})")
+        print(f"B. Vampiric Claws ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})")
+        print(f"C. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge']})")
+        print(f"D. Drain Life (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})")
+        print("E. Do nothing (energy: 0)\n")
 
         print("Players, what are your moves? \nPlease enter A, B, C, D, or, E only")
         player1Move = getValidInput(player1)
@@ -123,15 +129,11 @@ while playAgain == 'Y':
         input("\nPress any key to continue...")
         print()
 
-    print("==========")
-    print("Player Status\n----------")
-    printStatus(player1); print("----------")
-    printStatus(player2); print("==========")
+    printBothStats(player1, player2)
 
     if player1['health'] == player2 ['health']:
         print(f"Draw!")
-    
-    if player1['health'] > player2['health']:
+    elif player1['health'] > player2['health']:
         print(f"Player 1 ({player1['name']}) wins! Player 1 ascends to a Vampire Lord...")
     else:
         print(f"Player 2 ({player2['name']}) wins! Player 2 ascends to a Vampire Lord...")
