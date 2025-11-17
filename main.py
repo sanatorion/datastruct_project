@@ -24,7 +24,6 @@ def printBothStats(player1, player2):
         
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
-
     print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
     print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage.")
     attacker['energy'] = 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
@@ -50,19 +49,16 @@ def moveEffects(attackerMove, targetMove, attacker, target):
 def rest(player):
     heal = 20 if player['energy'] == 0 else 25
     energy = 13 if player['energy'] == 0 else 20
-    
     if player['energy'] == 0:
         print(f"Player {player['pcount']} ({player['name']}) is too tired, and can only rest partially...")
     else:
         print(f"Player {player['pcount']} ({player['name']}) is able to have a complete rest.")
     print(f"Player {player['pcount']} ({player['name']}) heals for {heal} and replenishes {energy} energy.")
-
     player['health'] += heal
     player['energy'] += energy
 
 def getValidInput(player):
     choices = ['A', 'B', 'C', 'D', 'E']
-
     if player['energy'] != 0:
         while(True):
             playerInput = input(f"Player {player['pcount']} ({player['name']}): ")
