@@ -8,7 +8,7 @@ def printStatus(player):
         
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
-    print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy."); attacker['energy'] -= energyVal
+    print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy."); attacker['energy'] == 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
     print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage."); target['health'] -= damageVal
 
     if attackerMove == 'D' and targetMove != 'C':
@@ -48,10 +48,6 @@ def getValidInput(player):
 
             if playerInput in choices and player['energy'] < moveEnergy[playerInput]:
                 print("Not enough energy to use that move.\n")
-                loop = True
-
-            if playerInput not in choices:
-                print("Only A, B, C, D, or E is allowed.\n")
                 loop = True
     else:
         input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
@@ -119,6 +115,9 @@ while playAgain == 'Y':
     printStatus(player1); print("----------")
     printStatus(player2); print("==========")
 
+    if player1['health'] == player2 ['health']:
+        print(f"Draw!")
+    
     if player1['health'] > player2['health']:
         print(f"Player 1 ({player1['name']}) wins! Player 1 ascends to a Vampire Lord...")
     else:
