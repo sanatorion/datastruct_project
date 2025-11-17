@@ -21,7 +21,6 @@ def printBothStats(player1, player2):
     print("----------")
     printStatus(player2)
     print("==========")
-
         
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
