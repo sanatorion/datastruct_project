@@ -48,14 +48,17 @@ def moveEffects(attackerMove, targetMove, attacker, target):
             print(f"Player {attacker['pcount']} ({attacker['name']}) does nothing.")
 
 def rest(player):
+    heal = 20 if player['energy'] == 0 else 25
+    energy = 13 if player['energy'] == 0 else 20
+    
     if player['energy'] == 0:
         print(f"Player {player['pcount']} ({player['name']}) is too tired, and can only rest partially...")
     else:
         print(f"Player {player['pcount']} ({player['name']}) is able to have a complete rest.")
-    print(f"Player {player['pcount']} ({player['name']}) heals for {20 if player['energy'] == 0 else 25} and replenishes {13 if player['energy'] == 0 else 20} energy.")
+    print(f"Player {player['pcount']} ({player['name']}) heals for {heal} and replenishes {energy} energy.")
 
-    player['health'] += 20 if player['energy'] == 0 else 25
-    player['energy'] += 13 if player['energy'] == 0 else 20
+    player['health'] += heal
+    player['energy'] += energy
 
 def getValidInput(player):
     choices = ['A', 'B', 'C', 'D', 'E']
