@@ -8,11 +8,14 @@ def printStatus(player):
         
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
-    print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy."); attacker['energy'] == 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
-    print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage."); target['health'] -= damageVal
+    print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
+    print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage.")
+    attacker['energy'] == 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
+    target['health'] -= damageVal
 
     if attackerMove == 'D' and targetMove != 'C':
-        print(f"Player {attacker['pcount']} ({attacker['name']}) gains {healVal} health."); attacker['health'] += healVal
+        print(f"Player {attacker['pcount']} ({attacker['name']}) gains {healVal} health.")
+        attacker['health'] += healVal
 
 moveEnergy = {'A': 6, 'B': 25, 'C': 10, 'D': 13, "E": 0}
 def moveEffects(attackerMove, targetMove, attacker, target):
@@ -31,10 +34,10 @@ def moveEffects(attackerMove, targetMove, attacker, target):
 def rest(player):
     if player['energy'] == 0:
         print(f"Player {player['pcount']} ({player['name']}) is too tired, and can only rest partially...")
-        print(f"Player {player['pcount']} ({player['name']}) heals for 20 and replenishes 13 energy.")
     else:
         print(f"Player {player['pcount']} ({player['name']}) is able to have a complete rest.")
-        print(f"Player {player['pcount']} ({player['name']}) heals for 25 and replenishes 20 energy.")
+    print(f"Player {player['pcount']} ({player['name']}) heals for {20 if player['energy'] == 0 else 25} and replenishes {13 if player['energy'] == 0 else 20} energy.")
+
     player['health'] += 20 if player['energy'] == 0 else 25
     player['energy'] += 13 if player['energy'] == 0 else 20
 
