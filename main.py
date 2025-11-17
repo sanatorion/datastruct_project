@@ -2,7 +2,7 @@ moves = {
     #name: energy, damage, heal
     "daggerSlash": [6, 10,0],
     "vampiricClaws": [25, 40, 0],
-    "dodge": {10, 0, 0},
+    "dodge": [10, 0, 0],
     "drain":[13, 6, 10]
 }
 
