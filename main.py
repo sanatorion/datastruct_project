@@ -1,3 +1,11 @@
+moves = { 
+    #name: energy, damage, heal
+    "daggerSlash": [6, 10],
+    "vampiricClaws": [25, 40],
+    "dodge": 10,
+    "drain":[13, 6, 10]
+}
+
 def printStatus(player):
     for key, value in player.items():
         if key != 'pcount':
@@ -8,26 +16,28 @@ def printStatus(player):
         
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
+
     print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
     print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage.")
-    attacker['energy'] == 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
+    old = attacker['energy']
+
+    attacker['energy'] = 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
     target['health'] -= damageVal
 
     if attackerMove == 'D' and targetMove != 'C':
         print(f"Player {attacker['pcount']} ({attacker['name']}) gains {healVal} health.")
         attacker['health'] += healVal
 
-moveEnergy = {'A': 6, 'B': 25, 'C': 10, 'D': 13, "E": 0}
 def moveEffects(attackerMove, targetMove, attacker, target):
     match attackerMove:
         case 'A': #dagger slash
-            applyEffects(attacker, target, attackerMove, targetMove, moveEnergy['A'], 10, 0) 
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['daggerSlash'], 0) 
         case 'B': #vampiric claws
-            applyEffects(attacker, target, attackerMove, targetMove, moveEnergy['B'], 40, 0)
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['vampiricClaws'], 0)
         case 'C': #dodge
-            applyEffects(attacker, target, attackerMove, targetMove, moveEnergy['C'], 0, 0)
+            applyEffects(attacker, target, attackerMove, targetMove, moves['dodge'], 0, 0)
         case 'D': #drain life
-            applyEffects(attacker, target, attackerMove, targetMove, moveEnergy['D'], 6, 10)
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'])
         case 'E': #do nothing
             print(f"Player {attacker['pcount']} ({attacker['name']}) chooses to do nothing.")
 
@@ -42,7 +52,7 @@ def rest(player):
     player['energy'] += 13 if player['energy'] == 0 else 20
 
 def getValidInput(player):
-    choices = list(moveEnergy.keys())
+    choices = ['A', 'B', 'C', 'D', 'E']
     loop = True
     if player['energy'] != 0:
         while(loop):
@@ -95,20 +105,21 @@ while playAgain == 'Y':
         printStatus(player2); print("==========")
 
         print("\nAvailable Moves:" \
-        "\nA. Dagger Slash (10 damage; energy: 6)" \
-        "\nB. Vampiric Claws (40 damage; energy: 25)" \
-        "\nC. Dodge: Bat Form (nullifies incoming attack; energy: 10)" \
-        "\nD. Drain Life (deals 6 damage then heals self by 10; energy: 13)" \
+        f"\nA. Dagger Slash ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})" \
+        f"\nB. Vampiric Claws ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})" \
+        f"\nC. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge']})" \
+        f"\nD. Drain Life (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})" \
         "\nE. Do nothing (energy: 0)\n")
 
         print("Players, what are your moves? \nPlease enter A, B, C, D, or, E only")
         player1Move = getValidInput(player1)
         player2Move = getValidInput(player2)
 
-        print("\nMove Effects:")
-        moveEffects(player1Move, player2Move, player1, player2)
-        print("----------")
-        moveEffects(player2Move, player1Move, player2, player1)
+        if player1Move != None and player2Move != None:
+            print("\nMove Effects:")
+            moveEffects(player1Move, player2Move, player1, player2)
+            if player1Move != None or player2Move != None: print("----------")
+            moveEffects(player2Move, player1Move, player2, player1)
 
         input("\nPress any key to continue...")
         print()
@@ -128,3 +139,4 @@ while playAgain == 'Y':
 
     print("\nWould you like to Play Again?")
     playAgain = input("Type (Y) to Play Again: ")
+    print()
