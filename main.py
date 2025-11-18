@@ -1,4 +1,6 @@
 #group version
+import animation, os
+
 
 moves = { 
     #name: energy, damage, heal
@@ -8,22 +10,28 @@ moves = {
     "drain":[13, 6, 10]
 }
 
+delay = 0.05
+def printBothStats(player1, player2):
+    animation.printPerLine(
+        "==========",
+        "Player Status",
+        "----------",
+        *printStatus(player1),
+        "----------",
+        *printStatus(player2),
+        "=========="
+    )
+
 def printStatus(player):
+    messages = []
     for key, value in player.items():
         if key != 'pcount':
             if key == 'name':
-                print(f"{key.capitalize()}: ({value})")
+                messages.append(f"{key.capitalize()}: ({value})")
             else:
-                print(f"{key.capitalize()}: {value}")
+                messages.append(f"{key.capitalize()}: {value}")
+    return messages
 
-def printBothStats(player1, player2):
-    print("==========")
-    print("Player Status\n----------")
-    printStatus(player1)
-    print("----------")
-    printStatus(player2)
-    print("==========")
-        
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
     print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
@@ -74,11 +82,18 @@ def getValidInput(player):
 #main
 playAgain = "Y"
 while playAgain == 'Y':
-    print("Welcome Vampire Spawn!\n")
-    print("Fight for the right to ascend into a Vampire lord")
-    print("Attempt to knockout your opponent.")
-    print("Use your vampiric moves to outsmart your opponent.")
-    print("\nPlayers enter your names...")
+    os.system('cls')
+    print("======================")
+    print("  VAMPIRE DUEL ARENA")
+    print("======================")
+    animation.time.sleep(1)
+
+    animation.printPerChar("Welcome Vampire Spawn!\n", False, 1, True)
+    animation.printPerChar("Fight for the right to ascend into a Vampire lord.", True, 0, True)
+    animation.printPerChar("Attempt to knockout your opponent.", True, 0, True)
+    animation.printPerChar("Use your vampiric moves to outsmart your opponent.", True, 0, True)
+    print()
+    animation.printPerChar("Players enter your names...", False, 0, False)
     player1 = {
         "name": input("Player 1: "),
         "health": 100,
@@ -91,10 +106,12 @@ while playAgain == 'Y':
         "energy": 50,
         "pcount": 2
     }
-    print(f"\nLet the duel between {player1['name']} and {player2['name']} begin!\n")
-
+    print()
+    animation.printPerChar(f"Let the duel between {player1['name']} and {player2['name']} begin!", False, 1, False)
+    os.system('cls')
     night = 0
     while player1['health'] > 0 and player2['health'] > 0:
+        os.system('cls')
         if night > 0 and night % 3 == 0:
             print("3 nights have passed. Both vampire spawns shall rest...")
             rest(player1)
@@ -104,15 +121,18 @@ while playAgain == 'Y':
             input("\nPress any key to continue...")
             print()
         night += 1
-        print(f"=== Night {night} ===")
-        printBothStats(player1, player2)
 
-        print("\nAvailable Moves:")
-        print(f"A. Dagger Slash ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})")
-        print(f"B. Vampiric Claws ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})")
-        print(f"C. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge'][0]})")
-        print(f"D. Drain Life (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})")
-        print("E. Do nothing (energy: 0)\n")
+        animation.printPerChar(f"=== Night {night} ===", False, 1, False)
+        printBothStats(player1, player2)
+        
+        animation.printPerLine(
+            "\nAvailable Moves:",
+            f"A. Dagger Slash ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})",
+            f"B. Vampiric Claws ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})",
+            f"C. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge'][0]})",
+            f"D. Drain Life (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})",
+            "E. Do nothing (energy: 0)\n"
+        )
 
         print("Players, what are your moves? \nPlease enter A, B, C, D, or, E only")
         player1Move = getValidInput(player1)
