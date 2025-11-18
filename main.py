@@ -1,6 +1,5 @@
 #group version
-import animation, os
-
+import animation, os, cursor
 
 moves = { 
     #name: energy, damage, heal
@@ -13,23 +12,24 @@ moves = {
 delay = 0.05
 def printBothStats(player1, player2):
     animation.printPerLine(
-        "==========",
-        "Player Status",
-        "----------",
+        "=======Player Status=======",
         *printStatus(player1),
-        "----------",
+        "---------------------------",
         *printStatus(player2),
-        "=========="
+        "---------------------------",
     )
 
 def printStatus(player):
     messages = []
+    
     for key, value in player.items():
+        symbol = '✚' if key is 'health' else '🗲'
+
         if key != 'pcount':
             if key == 'name':
                 messages.append(f"{key.capitalize()}: ({value})")
             else:
-                messages.append(f"{key.capitalize()}: {value}")
+                messages.append(f"{symbol} {key.capitalize()}: {value}")
     return messages
 
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
@@ -54,7 +54,7 @@ def moveEffects(attackerMove, targetMove, attacker, target):
         case 'D': #drain life
             applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'])
         case 'E': #do nothing
-            print(f"Player {attacker['pcount']} ({attacker['name']}) does nothing.")
+            print(f"Player {attacker['pcount']} ({attacker['name']}) does NOTHING.")
 
 def rest(player):
     heal = 20 if player['energy'] == 0 else 25
@@ -71,10 +71,12 @@ def getValidInput(player):
     choices = ['A', 'B', 'C', 'D', 'E']
     if player['energy'] != 0:
         while(True):
-            playerInput = input(f"Player {player['pcount']} ({player['name']}): ")
+            animation.printPerChar(f"\rPlayer {player['pcount']} ({player['name']}): ", False, delay, False, False)
+            playerInput = input()
             if playerInput in choices: 
                 return playerInput
             print("Only A, B, C, D, or E is allowed.\n")
+            
     else:
         input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
         return 'E'
@@ -88,12 +90,12 @@ while playAgain == 'Y':
     print("======================")
     animation.time.sleep(1)
 
-    animation.printPerChar("Welcome Vampire Spawn!\n", False, 1, True)
-    animation.printPerChar("Fight for the right to ascend into a Vampire lord.", True, 0, True)
-    animation.printPerChar("Attempt to knockout your opponent.", True, 0, True)
-    animation.printPerChar("Use your vampiric moves to outsmart your opponent.", True, 0, True)
+    animation.printPerChar("Welcome Vampire Spawn!\n", False, 1, True, True)
+    animation.printPerChar("Fight for the right to ascend into a Vampire lord.", True, 0, True, False)
+    animation.printPerChar("Attempt to knockout your opponent.", True, 0, True, False)
+    animation.printPerChar("Use your vampiric moves to outsmart your opponent.", True, 0, True, False)
     print()
-    animation.printPerChar("Players enter your names...", False, 0, False)
+    animation.printPerChar("Players enter your names...", False, 0, False, True)
     player1 = {
         "name": input("Player 1: "),
         "health": 100,
@@ -107,12 +109,14 @@ while playAgain == 'Y':
         "pcount": 2
     }
     print()
-    animation.printPerChar(f"Let the duel between {player1['name']} and {player2['name']} begin!", False, 1, False)
+    animation.printPerChar(f"Let the duel between {player1['name']} and {player2['name']} begin!", False, 1, False, True)
     os.system('cls')
     night = 0
     while player1['health'] > 0 and player2['health'] > 0:
         os.system('cls')
         if night > 0 and night % 3 == 0:
+            printBothStats(player1, player2)
+            print()
             print("3 nights have passed. Both vampire spawns shall rest...")
             rest(player1)
             print("----------")
@@ -122,20 +126,21 @@ while playAgain == 'Y':
             print()
         night += 1
 
-        animation.printPerChar(f"=== Night {night} ===", False, 1, False)
+        animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 1, False, True)
         printBothStats(player1, player2)
         
         animation.printPerLine(
-            "\nAvailable Moves:",
-            f"A. Dagger Slash ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})",
-            f"B. Vampiric Claws ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})",
-            f"C. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge'][0]})",
-            f"D. Drain Life (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})",
-            "E. Do nothing (energy: 0)\n"
+            "\n======Available Moves======",
+            f"A. DAGGER SLASH ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})",
+            f"B. VAMPIRIC CLAWS ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})",
+            f"C. DODGE: BAT FORM (nullifies incoming attack; energy: {moves['dodge'][0]})",
+            f"D. DRAIN LIFE (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})",
+            "E. Do NOTHING (energy: 0)\n"
         )
 
-        print("Players, what are your moves? \nPlease enter A, B, C, D, or, E only")
+        print("Choose your moves")
         player1Move = getValidInput(player1)
+        print('\033[F\033[2K', end = '')
         player2Move = getValidInput(player2)
 
         print("\nMove Effects:")

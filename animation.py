@@ -1,6 +1,6 @@
 import time, cursor, msvcrt
 
-delayperchar = 0.05
+delayperchar = 0.03
 delayperline = 0.02
 def readbuffer():
     while msvcrt.kbhit():
@@ -11,7 +11,7 @@ def printPerLine(*messages):
         print(message)
         time.sleep(delayperline)
         
-def printPerChar(message, pressToContinue, delay, allowSkip):
+def printPerChar(message, pressToContinue, delay, allowSkip, printnewline):
     readbuffer()
     for char in message:
         if msvcrt.kbhit():
@@ -28,5 +28,5 @@ def printPerChar(message, pressToContinue, delay, allowSkip):
     
     if pressToContinue:
         input()
-    else:
+    elif printnewline:
         print()
