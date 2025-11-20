@@ -205,7 +205,7 @@ while playAgain == 'Y':
 
         round += 1
         animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 0, True, True)
-        animation.printPerChar(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯", False, 1, True, True)
+        animation.printPerChar(f"<-------> Round {round} <------->", False, 1, True, True)
         printBothStats(player1, player2, True)
         
         animation.printPerLine( 0,
@@ -224,7 +224,7 @@ while playAgain == 'Y':
 
         os.system('cls')
         print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
-        print(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯")
+        print(f"<-------> Round {round} <------->")
         animation.savepos()
         printBothStats(player1, player2, False)
         print()
