@@ -123,6 +123,7 @@ while playAgain == 'Y':
         player1Move = getValidInput(player1)
         player2Move = getValidInput(player2)
 
+        os.system('cls')
         print("\nMove Effects:")
         moveEffects(player1Move, player2Move, player1, player2)
         print("----------")
