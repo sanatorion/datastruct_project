@@ -78,7 +78,7 @@ def printStatus(player):
     return messages
 
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal, applydelays):
-    movePerLetter = {'A' : 'DAGGER SLASH', 'B' : 'VAMPIRIC CLAWS', 'C' : 'DODGE', 'D' : 'DRAIN LIFE'}
+    movePerLetter = {'A' : 'DAGGER SLASH', 'B' : 'VAMPIRIC CLAWS', 'C' : 'DODGE: BAT FORM', 'D' : 'DRAIN LIFE'}
     damageVal = 0 if targetMove == 'C' else damageVal
 
     animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses {movePerLetter[attackerMove]}.", False, 0, True, True)
@@ -141,8 +141,6 @@ def getValidInput(player):
         return 'E'
     
 #==========MAIN=============
-playAgain = "Y"
-os.system('cls')
 print("======================")
 print("  VAMPIRE DUEL ARENA")
 print("======================")
@@ -157,6 +155,8 @@ animation.printPerChar("Players enter your names...", False, 0, False, True)
 player1Name = input("Player 1: ")
 player2Name = input("Player 2: ")
 print()
+
+playAgain = "Y"
 while playAgain == 'Y':
     animation.printPerChar(f"Let the duel between {player1Name} and {player2Name} begin!", False, 1, False, True)
 
