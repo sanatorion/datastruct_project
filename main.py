@@ -1,8 +1,11 @@
 #group version
-#DISCONTINUED.
-#MAYBE IN THE FUTURE...
 
-import animation, os
+import animation, os, pygame
+
+pygame.init()
+pygame.mixer.init()
+print("")
+
 moves = { 
     #name: energy, damage, heal
     "daggerSlash": [6, 10,0],
@@ -20,7 +23,7 @@ delay = 0.05
 delayPerStatResult = 0.5
 def printBothStats(player1, player2, perLine):
     if perLine:
-        animation.printPerLine( 0,
+        animation.printPerLine( False, 0,
             "=======Player Status=======",
             *printStatus(player1),
             "---------------------------",
@@ -34,30 +37,35 @@ def printBothStats(player1, player2, perLine):
         for message in printStatus(player2):
             print(message)
         print("---------------------------")
-            
+        
+        
 def updateStats(player1, player2):
     while any(value for _, stats in effectsPerPlayer.items() for _, value in stats.items()):
         animation.restorepos()
         printBothStats(player1, player2, False)
 
         #increment or decrement stats by 1
+        sfx = pygame.mixer.Sound("sounds/stat.mp3")
+        sfx.set_volume(0.3)
+        sfx.play()
         for player, stats in effectsPerPlayer.items():
-            player = player1 if player == 1 else player2
+            playernum = player1 if player == 1 else player2
             for key, _ in stats.items():
                 if stats[key] < 0:
                     stats[key] += 1
-                    player[key] -= 1
-                    if key == 'energy' and player[key] == 0:
+                    playernum[key] -= 1
+                    if playernum[key] == 0:
                         stats[key] = 0
 
                 elif stats[key] > 0:
-                    stats[key] -= 1
-                    player[key] += 1
-        
+                    if key == 'energy' and playernum[key] == 50:
+                        stats[key] = 0
+                    else: 
+                        stats[key] -= 1
+                        playernum[key] += 1
         animation.time.sleep(0.10)
     animation.restorepos()
     printBothStats(player1, player2, False)
-        
 
 def reseteffectsPerPlayer():
     for key in range (1, 3):
@@ -79,36 +87,49 @@ def printStatus(player):
     return messages
 
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal, applydelays):
-    movePerLetter = {'A' : 'DAGGER SLASH', 'B' : 'VAMPIRIC CLAWS', 'C' : 'DODGE', 'D' : 'DRAIN LIFE'}
     damageVal = 0 if targetMove == 'C' else damageVal
-
-    animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses {movePerLetter[attackerMove]}.", False, 0, False, True)
     if applydelays: animation.time.sleep(delayPerStatResult)
+    sfx = pygame.mixer.Sound("sounds/permove.mp3"); sfx.set_volume(0.5); sfx.play()
     print(f"• Energy Used: {energyVal}")
     if applydelays: animation.time.sleep(delayPerStatResult)
-    if attackerMove != 'C': print(f"• Damage Dealt: {damageVal}")
+    
+    if attackerMove != 'C': 
+        sfx = pygame.mixer.Sound("sounds/permove.mp3"); sfx.set_volume(0.5); sfx.play()
+        print(f"• Damage Dealt: {damageVal}")
 
     effectsPerPlayer[attacker['pcount']]['energy'] -= energyVal
     effectsPerPlayer[target['pcount']]['health'] -= damageVal
 
-
     if attackerMove == 'D' and targetMove != 'C':
         if applydelays: animation.time.sleep(delayPerStatResult)
+        sfx = pygame.mixer.Sound("sounds/permove.mp3"); sfx.set_volume(0.5); sfx.play()
         print(f"• Health Gained: {healVal}")
         effectsPerPlayer[attacker['pcount']]['health'] += healVal
 
 def moveEffects(attackerMove, targetMove, attacker, target, applydelays):
     match attackerMove:
         case 'A': #dagger slash
+            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses DAGGER SLASH.", False, 0, True, True)
+            sfx = pygame.mixer.Sound("sounds/daggerslash.mp3"); sfx.set_volume(0.5); sfx.play()
+            animation.time.sleep(0.5)
             applyEffects(attacker, target, attackerMove, targetMove, *moves['daggerSlash'], applydelays)
         case 'B': #vampiric claws
+            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses VAMPIRIC CLAWS.", False, 0, True, True)
+            sfx = pygame.mixer.Sound("sounds/claw.mp3"); sfx.set_volume(0.5); sfx.play()
+            animation.time.sleep(0.5)
             applyEffects(attacker, target, attackerMove, targetMove, *moves['vampiricClaws'], applydelays)
         case 'C': #dodge
+            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses DODGE: BAT FORM.", False, 0, True, True)
+            sfx = pygame.mixer.Sound("sounds/dodge.mp3"); sfx.set_volume(1.0); sfx.play()
+            animation.time.sleep(0.5)
             applyEffects(attacker, target, attackerMove, targetMove, *moves['dodge'], applydelays)
         case 'D': #drain life
+            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses DRAIN LIFE.", False, 0, True, True)
+            sfx = pygame.mixer.Sound("sounds/drain.mp3"); sfx.set_volume(0.3); sfx.play()
+            animation.time.sleep(0.5)
             applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'], applydelays)
         case 'E': #do nothing
-            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) does NOTHING.", False, 0, False, True)
+            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) does NOTHING.", False, 0, True, True)
 
 def rest(player):
     heal = 20 if player['energy'] == 0 else 25
@@ -117,7 +138,7 @@ def rest(player):
         animation.printPerChar(f"Player {player['pcount']} ({player['name']}) is too tired, and can only rest partially...", False, 1, True, True)
     else:
         animation.printPerChar(f"Player {player['pcount']} ({player['name']}) is able to have a complete rest.", False, 1, True, True)
-    animation.printPerLine( delayPerStatResult,
+    animation.printPerLine(True, delayPerStatResult,
         f"• Health Gained: {heal}",
         f"• Energy Replenished: {energy}",
         )
@@ -138,41 +159,52 @@ def getValidInput(player):
 
             
     else:
-        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...", False, 1, False, False)
+        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...", False, 1, False, True)
         return 'E'
     
 #==========MAIN=============
+pygame.mixer.music.load('sounds\menu.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play()
+print("======================")
+print("  VAMPIRE DUEL ARENA")
+print("======================")
+animation.time.sleep(1)
+
+animation.printPerChar("Welcome Vampire Spawn!\n", False, 1, True, True)
+animation.printPerChar("Fight for the right to ascend into a Vampire lord.", True, 0, True, True)
+animation.printPerChar("Attempt to knockout your opponent.", True, 0, True, True)
+animation.printPerChar("Use your vampiric moves to outsmart your opponent.", True, 0, True, True)
+print()
+animation.printPerChar("Players enter your names...", False, 0, False, True)
+player1Name = input("Player 1: ")
+player2Name = input("Player 2: ")
+print()
+
 playAgain = "Y"
 while playAgain == 'Y':
-    os.system('cls')
-    print("======================")
-    print("  VAMPIRE DUEL ARENA")
-    print("======================")
-    animation.time.sleep(1)
+    pygame.mixer.music.stop()
+    animation.printPerChar(f"Let the duel between {player1Name} and {player2Name} begin!", False, 1, False, True)
 
-    animation.printPerChar("Welcome Vampire Spawn!\n", False, 1, True, True)
-    animation.printPerChar("Fight for the right to ascend into a Vampire lord.", False, 0, True, True)
-    animation.printPerChar("Attempt to knockout your opponent.", False, 0, True, True)
-    animation.printPerChar("Use your vampiric moves to outsmart your opponent.", False, 0, True, True)
-    print()
-    animation.printPerChar("Players enter your names...", False, 0, False, True)
     player1 = {
-        "name": input("Player 1: "),
-        "health": 100,
-        "energy": 50,
-        "pcount": 1
+    "name": player1Name,
+    "health": 100,
+    "energy": 50,
+    "pcount": 1
     }
     player2 = {
-        "name": input("Player 2: "),
+        "name": player2Name,
         "health": 100,
         "energy": 50,
         "pcount": 2
     }
-    print()
-    animation.printPerChar(f"Let the duel between {player1['name']} and {player2['name']} begin!", False, 1, False, True)
+
     os.system('cls')
     night = 1
     round = 0
+    pygame.mixer.music.load('sounds\combat.mp3')
+    pygame.mixer.music.set_volume(0.8)
+    pygame.mixer.music.play(-1)
     while player1['health'] > 0 and player2['health'] > 0:
         os.system('cls')
         if round == 3:
@@ -201,11 +233,12 @@ while playAgain == 'Y':
             os.system('cls')
 
         round += 1
-        animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 0, False, True)
-        animation.printPerChar(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯", False, 1, False, True)
+        player1['health'] = 1
+        animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 0, True, True)
+        animation.printPerChar(f"<-------> Round {round} <------->", False, 1, True, True)
         printBothStats(player1, player2, True)
         
-        animation.printPerLine( 0,
+        animation.printPerLine( False, 0,
             "\n======Available Moves======",
             f"A. DAGGER SLASH ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})",
             f"B. VAMPIRIC CLAWS ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})",
@@ -221,10 +254,11 @@ while playAgain == 'Y':
 
         os.system('cls')
         print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
-        print(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯")
+        print(f"<-------> Round {round} <------->")
         animation.savepos()
         printBothStats(player1, player2, False)
-        animation.printPerChar("\n=======Moves Effects=======", False, 1, False, True)
+        print()
+        animation.printPerChar("=======Moves Effects=======", False, 1, True, True)
 
         moveEffects(player1Move, player2Move, player1, player2, True) #player1
         animation.time.sleep(delayPerStatResult)
@@ -250,13 +284,16 @@ while playAgain == 'Y':
         if player2Move != 'E':
             updateStats(player1, player2)
             reseteffectsPerPlayer()
-        animation.time.sleep(1.5)
+            animation.time.sleep(1)
     
     os.system('cls')
+    pygame.mixer.music.stop()
+    sfx = pygame.mixer.Sound("sounds/gameover.mp3"); sfx.set_volume(0.3); sfx.play()
     print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
-    print(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯")
+    print(f"<-------> Round {round} <------->")
     printBothStats(player1, player2, False)
     print()
+
     if player1['health'] == player2 ['health']:
         animation.printPerChar(f"Draw! As both {player1['name']} and {player2['name']} fail to ascend...", False, 1.5, False, True)
     elif player1['health'] > player2['health']:
@@ -265,3 +302,4 @@ while playAgain == 'Y':
         animation.printPerChar(f"Player 2 ({player2['name']}) wins! Player 2 ascends to a Vampire Lord...", False, 1.5, False, True)
     animation.printPerChar("\nWould you like to Play Again?", False, 0, False, True)
     playAgain = input("Type (Y) to Play Again: ")
+    os.system('cls')
