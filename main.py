@@ -40,17 +40,17 @@ def updateStats(player1, player2):
 
         #increment or decrement stats by 1
         for player, stats in effectsPerPlayer.items():
-            player = player1 if player == 1 else player2
+            playernum = player1 if player == 1 else player2
             for key, _ in stats.items():
                 if stats[key] < 0:
                     stats[key] += 1
-                    player[key] -= 1
-                    if key == 'energy' and player[key] == 0:
+                    playernum[key] -= 1
+                    if playernum[key] == 0:
                         stats[key] = 0
 
                 elif stats[key] > 0:
                     stats[key] -= 1
-                    player[key] += 1
+                    playernum[key] += 1
         
         animation.time.sleep(0.10)
     animation.restorepos()
@@ -140,33 +140,37 @@ def getValidInput(player):
     
 #==========MAIN=============
 playAgain = "Y"
-while playAgain == 'Y':
-    os.system('cls')
-    print("======================")
-    print("  VAMPIRE DUEL ARENA")
-    print("======================")
-    animation.time.sleep(1)
+os.system('cls')
+print("======================")
+print("  VAMPIRE DUEL ARENA")
+print("======================")
+animation.time.sleep(1)
 
-    animation.printPerChar("Welcome Vampire Spawn!\n", False, 1, True, True)
-    animation.printPerChar("Fight for the right to ascend into a Vampire lord.", False, 0, True, True)
-    animation.printPerChar("Attempt to knockout your opponent.", False, 0, True, True)
-    animation.printPerChar("Use your vampiric moves to outsmart your opponent.", False, 0, True, True)
-    print()
-    animation.printPerChar("Players enter your names...", False, 0, False, True)
+animation.printPerChar("Welcome Vampire Spawn!\n", False, 1, True, True)
+animation.printPerChar("Fight for the right to ascend into a Vampire lord.", False, 0, True, True)
+animation.printPerChar("Attempt to knockout your opponent.", False, 0, True, True)
+animation.printPerChar("Use your vampiric moves to outsmart your opponent.", False, 0, True, True)
+print()
+animation.printPerChar("Players enter your names...", False, 0, False, True)
+player1Name = input("Player 1: ")
+player2Name = input("Player 2: ")
+print()
+while playAgain == 'Y':
+    animation.printPerChar(f"Let the duel between {player1Name} and {player2Name} begin!", False, 1, False, True)
+
     player1 = {
-        "name": input("Player 1: "),
-        "health": 100,
-        "energy": 50,
-        "pcount": 1
+    "name": player1Name,
+    "health": 100,
+    "energy": 50,
+    "pcount": 1
     }
     player2 = {
-        "name": input("Player 2: "),
+        "name": player2Name,
         "health": 100,
         "energy": 50,
         "pcount": 2
     }
-    print()
-    animation.printPerChar(f"Let the duel between {player1['name']} and {player2['name']} begin!", False, 1, False, True)
+
     os.system('cls')
     night = 1
     round = 0
@@ -263,3 +267,4 @@ while playAgain == 'Y':
         animation.printPerChar(f"Player 2 ({player2['name']}) wins! Player 2 ascends to a Vampire Lord...", False, 1.5, False, True)
     animation.printPerChar("\nWould you like to Play Again?", False, 0, False, True)
     playAgain = input("Type (Y) to Play Again: ")
+    os.system('cls')
