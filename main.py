@@ -81,6 +81,9 @@ def getValidInput(player):
         return 'E'
 
 #main
+print("======================")
+print("  VAMPIRE DUEL ARENA")
+print("======================")
 print("Welcome Vampire Spawn!\n")
 print("Fight for the right to ascend into a Vampire lord")
 print("Attempt to knockout your opponent.")
