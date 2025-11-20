@@ -1,5 +1,6 @@
 #group version
-import animation, os, cursor
+
+import animation, os
 
 moves = { 
     #name: energy, damage, heal
@@ -9,79 +10,137 @@ moves = {
     "drain":[13, 6, 10]
 }
 
+effectsPerPlayer = {
+    1: {'health': 0, 'energy': 0},
+    2: {'health': 0, 'energy': 0}
+}
+
 delay = 0.05
-def printBothStats(player1, player2):
-    animation.printPerLine(
-        "=======Player Status=======",
-        *printStatus(player1),
-        "---------------------------",
-        *printStatus(player2),
-        "---------------------------",
-    )
+delayPerStatResult = 0.5
+def printBothStats(player1, player2, perLine):
+    if perLine:
+        animation.printPerLine( 0,
+            "=======Player Status=======",
+            *printStatus(player1),
+            "---------------------------",
+            *printStatus(player2),
+            "---------------------------", )
+    else:
+        print("=======Player Status=======")
+        for message in printStatus(player1):
+            print(message)
+        print("---------------------------")
+        for message in printStatus(player2):
+            print(message)
+        print("---------------------------")
+            
+def updateStats(player1, player2):
+    while any(value for _, stats in effectsPerPlayer.items() for _, value in stats.items()):
+        animation.restorepos()
+        printBothStats(player1, player2, False)
+
+        #increment or decrement stats by 1
+        for player, stats in effectsPerPlayer.items():
+            player = player1 if player == 1 else player2
+            for key, _ in stats.items():
+                if stats[key] < 0:
+                    stats[key] += 1
+                    player[key] -= 1
+                    if key == 'energy' and player[key] == 0:
+                        stats[key] = 0
+
+                elif stats[key] > 0:
+                    stats[key] -= 1
+                    player[key] += 1
+        
+        animation.time.sleep(0.10)
+    animation.restorepos()
+    printBothStats(player1, player2, False)
+        
+
+def reseteffectsPerPlayer():
+    for key in range (1, 3):
+        effectsPerPlayer[key]['health'] = 0
+        effectsPerPlayer[key]['energy'] = 0
 
 def printStatus(player):
     messages = []
-    
     for key, value in player.items():
-        symbol = '✚' if key is 'health' else '🗲'
+        symbol = '✚' if key == 'health' else '🗲'
 
         if key != 'pcount':
             if key == 'name':
                 messages.append(f"{key.capitalize()}: ({value})")
             else:
-                messages.append(f"{symbol} {key.capitalize()}: {value}")
+                positiveORnegative = f"{'+' if effectsPerPlayer[player['pcount']][key] > 0 else ''}"
+                statEffect = f"({positiveORnegative}{effectsPerPlayer[player['pcount']][key]})" if effectsPerPlayer[player['pcount']][key] != 0 else ''
+                messages.append(f"{symbol} {key.capitalize()}: {value} {statEffect}     ")
     return messages
 
-def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
+def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal, applydelays):
+    movePerLetter = {'A' : 'DAGGER SLASH', 'B' : 'VAMPIRIC CLAWS', 'C' : 'DODGE', 'D' : 'DRAIN LIFE'}
     damageVal = 0 if targetMove == 'C' else damageVal
 
-    print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
-    print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage.")
-    attacker['energy'] = 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
-    target['health'] -= damageVal
+    animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses {movePerLetter[attackerMove]}.", False, 0, False, True)
+    if applydelays: animation.time.sleep(delayPerStatResult)
+    print(f"• Energy Used: {energyVal}")
+    if applydelays: animation.time.sleep(delayPerStatResult)
+    if attackerMove != 'C': print(f"• Damage Dealt: {damageVal}")
+
+    effectsPerPlayer[attacker['pcount']]['energy'] -= energyVal
+    effectsPerPlayer[target['pcount']]['health'] -= damageVal
+
 
     if attackerMove == 'D' and targetMove != 'C':
-        print(f"Player {attacker['pcount']} ({attacker['name']}) gains {healVal} health.")
-        attacker['health'] += healVal
+        if applydelays: animation.time.sleep(delayPerStatResult)
+        print(f"• Health Gained: {healVal}")
+        effectsPerPlayer[attacker['pcount']]['health'] += healVal
 
-def moveEffects(attackerMove, targetMove, attacker, target):
+def moveEffects(attackerMove, targetMove, attacker, target, applydelays):
     match attackerMove:
         case 'A': #dagger slash
-            applyEffects(attacker, target, attackerMove, targetMove, *moves['daggerSlash']) 
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['daggerSlash'], applydelays)
         case 'B': #vampiric claws
-            applyEffects(attacker, target, attackerMove, targetMove, *moves['vampiricClaws'])
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['vampiricClaws'], applydelays)
         case 'C': #dodge
-            applyEffects(attacker, target, attackerMove, targetMove, *moves['dodge'])
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['dodge'], applydelays)
         case 'D': #drain life
-            applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'])
+            applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'], applydelays)
         case 'E': #do nothing
-            print(f"Player {attacker['pcount']} ({attacker['name']}) does NOTHING.")
+            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) does NOTHING.", False, 0, False, True)
 
 def rest(player):
     heal = 20 if player['energy'] == 0 else 25
     energy = 13 if player['energy'] == 0 else 20
     if player['energy'] == 0:
-        print(f"Player {player['pcount']} ({player['name']}) is too tired, and can only rest partially...")
+        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) is too tired, and can only rest partially...", False, 1, True, True)
     else:
-        print(f"Player {player['pcount']} ({player['name']}) is able to have a complete rest.")
-    print(f"Player {player['pcount']} ({player['name']}) heals for {heal} and replenishes {energy} energy.")
-    player['health'] += heal
-    player['energy'] += energy
+        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) is able to have a complete rest.", False, 1, True, True)
+    animation.printPerLine( delayPerStatResult,
+        f"• Health Gained: {heal}",
+        f"• Energy Replenished: {energy}",
+        )
+    effectsPerPlayer[player['pcount']]['health'] += heal
+    effectsPerPlayer[player['pcount']]['energy'] += energy
 
 def getValidInput(player):
     choices = ['A', 'B', 'C', 'D', 'E']
     if player['energy'] != 0:
         while(True):
+            animation.clearLine(False)
             animation.printPerChar(f"\rPlayer {player['pcount']} ({player['name']}): ", False, delay, False, False)
             playerInput = input()
             if playerInput in choices: 
                 return playerInput
-            print("Only A, B, C, D, or E is allowed.\n")
+            animation.clearLine(True)
+            animation.printPerChar("Only A, B, C, D, or E is allowed.", False, 1, False, False)
+
             
     else:
-        input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
+        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...", True, False, False, False)
         return 'E'
-#main
+    
+#==========MAIN=============
 playAgain = "Y"
 while playAgain == 'Y':
     os.system('cls')
@@ -115,21 +174,33 @@ while playAgain == 'Y':
     while player1['health'] > 0 and player2['health'] > 0:
         os.system('cls')
         if night > 0 and night % 3 == 0:
-            printBothStats(player1, player2)
+            animation.printPerChar("3 nights have passed. Both vampire spawns shall rest...", False, 1, True, True)
             print()
-            print("3 nights have passed. Both vampire spawns shall rest...")
+            animation.savepos()
+            printBothStats(player1, player2, True)
+
+            print()
             rest(player1)
-            print("----------")
+            print("---------------------------")
+            animation.time.sleep(1.5)
+            updateStats(player1, player2)
+            reseteffectsPerPlayer()
+            
+            animation.time.sleep(1)
+            print("\n\n\n\n")
             rest(player2)
+            animation.time.sleep(1.5)
+            updateStats(player1, player2)
+            reseteffectsPerPlayer()
         
-            input("\nPress any key to continue...")
-            print()
+            animation.time.sleep(1.5)
+            os.system('cls')
 
         night += 1
         animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 1, False, True)
-        printBothStats(player1, player2)
+        printBothStats(player1, player2, True)
         
-        animation.printPerLine(
+        animation.printPerLine( 0,
             "\n======Available Moves======",
             f"A. DAGGER SLASH ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})",
             f"B. VAMPIRIC CLAWS ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})",
@@ -140,26 +211,49 @@ while playAgain == 'Y':
 
         print("Choose your moves")
         player1Move = getValidInput(player1)
-        print('\033[F\033[2K', end = '')
+        animation.clearLine(True)
         player2Move = getValidInput(player2)
 
-        print("\nMove Effects:")
-        moveEffects(player1Move, player2Move, player1, player2)
-        print("----------")
-        moveEffects(player2Move, player1Move, player2, player1)
+        os.system('cls')
+        print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
+        animation.savepos()
+        printBothStats(player1, player2, False)
+        animation.printPerChar("\n=======Moves Effects=======", False, 1, False, True)
 
-        input("\nPress any key to continue...")
-        print()
+        moveEffects(player1Move, player2Move, player1, player2, True) #player1
+        print("---------------------------")
+        animation.time.sleep(1.5)
+        if player1Move != 'E': 
+            updateStats(player1, player2)
+            reseteffectsPerPlayer()
 
-    printBothStats(player1, player2)
+            animation.time.sleep(1)
+            if player1Move == 'C':
+                print("\n\n\n\n")   
+            elif player1Move == 'D':
+                if player2Move == 'C':
+                    print("\n\n\n\n\n")
+                else:
+                    print("\n\n\n\n\n\n")
+            else:
+                print("\n\n\n\n\n")
 
-    if player1['health'] == player2 ['health']:
-        print(f"Draw!")
-    elif player1['health'] > player2['health']:
-        print(f"Player 1 ({player1['name']}) wins! Player 1 ascends to a Vampire Lord...")
-    else:
-        print(f"Player 2 ({player2['name']}) wins! Player 2 ascends to a Vampire Lord...")
-
-    print("\nWould you like to Play Again?")
-    playAgain = input("Type (Y) to Play Again: ")
+        moveEffects(player2Move, player1Move, player2, player1, True) #player2
+        animation.time.sleep(1.5)
+        if player2Move != 'E':
+            updateStats(player1, player2)
+            reseteffectsPerPlayer()
+        animation.time.sleep(1.5)
+    
+    os.system('cls')
+    print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
+    printBothStats(player1, player2, False)
     print()
+    if player1['health'] == player2 ['health']:
+        animation.printPerChar(f"Draw! As both {player1['name']} and {player2['name']} fail to ascend...", False, 1.5, False, True)
+    elif player1['health'] > player2['health']:
+        animation.printPerChar(f"Player 1 ({player1['name']}) wins! Player 1 ascends to a Vampire Lord...", False, 1.5, False, True)
+    else:
+        animation.printPerChar(f"Player 2 ({player2['name']}) wins! Player 2 ascends to a Vampire Lord...", False, 1.5, False, True)
+    animation.printPerChar("\nWould you like to Play Again?", False, 0, False, True)
+    playAgain = input("Type (Y) to Play Again: ")

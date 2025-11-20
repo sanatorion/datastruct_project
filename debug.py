@@ -1,4 +1,4 @@
-import cursor, animation
+import animation
 
 number = 13
 i = 0
@@ -17,4 +17,7 @@ while i < number:
     print('\033[F\033[2K', end = '')
 print(f"\r✚ Health: {hp}")
 input()
+
+print("====Moves Effects====")
+
     
