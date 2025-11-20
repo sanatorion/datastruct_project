@@ -125,7 +125,6 @@ while playAgain == 'Y':
             rest(player2)
         
             input("\nPress any key to continue...")
-            print()
 
         round += 1
         os.system('cls')
