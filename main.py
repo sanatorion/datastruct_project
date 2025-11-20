@@ -258,7 +258,7 @@ while playAgain == 'Y':
     
     os.system('cls')
     print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
-    print(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯")
+    print(f"<-------> Round {round} <------->")
     printBothStats(player1, player2, False)
     print()
     if player1['health'] == player2 ['health']:
