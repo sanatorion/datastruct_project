@@ -23,7 +23,7 @@ def printPerChar(message, pressToContinue, delay, allowSkip, printnewline):
                 print("\r" + message)
                 return
 
-        print(char, end='')
+        print(char, end='', flush=True)
         time.sleep(delayperchar)
     
     time.sleep(delay)
