@@ -1,4 +1,6 @@
 #group version
+#DISCONTINUED.
+#MAYBE IN THE FUTURE...
 
 import animation, os
 moves = { 
