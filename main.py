@@ -55,7 +55,6 @@ def updateStats(player1, player2):
         animation.time.sleep(0.10)
     animation.restorepos()
     printBothStats(player1, player2, False)
-        
 
 def reseteffectsPerPlayer():
     for key in range (1, 3):
