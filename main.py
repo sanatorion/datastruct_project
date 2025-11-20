@@ -9,7 +9,6 @@ moves = {
 }
 
 def printStatus(player):
-    
     for key, value in player.items():
         symbol = '✚' if key == 'health' else '🗲'
         if key != 'pcount':
