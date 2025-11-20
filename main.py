@@ -80,7 +80,7 @@ def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVa
     movePerLetter = {'A' : 'DAGGER SLASH', 'B' : 'VAMPIRIC CLAWS', 'C' : 'DODGE', 'D' : 'DRAIN LIFE'}
     damageVal = 0 if targetMove == 'C' else damageVal
 
-    animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses {movePerLetter[attackerMove]}.", False, 0, False, True)
+    animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) uses {movePerLetter[attackerMove]}.", False, 0, True, True)
     if applydelays: animation.time.sleep(delayPerStatResult)
     print(f"• Energy Used: {energyVal}")
     if applydelays: animation.time.sleep(delayPerStatResult)
@@ -106,7 +106,7 @@ def moveEffects(attackerMove, targetMove, attacker, target, applydelays):
         case 'D': #drain life
             applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'], applydelays)
         case 'E': #do nothing
-            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) does NOTHING.", False, 0, False, True)
+            animation.printPerChar(f"Player {attacker['pcount']} ({attacker['name']}) does NOTHING.", False, 0, True, True)
 
 def rest(player):
     heal = 20 if player['energy'] == 0 else 25
@@ -136,7 +136,7 @@ def getValidInput(player):
 
             
     else:
-        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...", False, 1, False, False)
+        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...", False, 1, False, True)
         return 'E'
     
 #==========MAIN=============
@@ -199,8 +199,8 @@ while playAgain == 'Y':
             os.system('cls')
 
         round += 1
-        animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 0, False, True)
-        animation.printPerChar(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯", False, 1, False, True)
+        animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 0, True, True)
+        animation.printPerChar(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯", False, 1, True, True)
         printBothStats(player1, player2, True)
         
         animation.printPerLine( 0,
@@ -222,7 +222,8 @@ while playAgain == 'Y':
         print(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯")
         animation.savepos()
         printBothStats(player1, player2, False)
-        animation.printPerChar("\n=======Moves Effects=======", False, 1, False, True)
+        print()
+        animation.printPerChar("=======Moves Effects=======", False, 1, True, True)
 
         moveEffects(player1Move, player2Move, player1, player2, True) #player1
         animation.time.sleep(delayPerStatResult)
@@ -248,7 +249,7 @@ while playAgain == 'Y':
         if player2Move != 'E':
             updateStats(player1, player2)
             reseteffectsPerPlayer()
-        animation.time.sleep(1.5)
+            animation.time.sleep(1)
     
     os.system('cls')
     print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
