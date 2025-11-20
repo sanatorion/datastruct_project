@@ -52,7 +52,7 @@ def moveEffects(attackerMove, targetMove, attacker, target):
         case 'D': #drain life
             applyEffects(attacker, target, attackerMove, targetMove, *moves['drain'])
         case 'E': #do nothing
-            print(f"Player {attacker['pcount']} ({attacker['name']}) does nothing.")
+            print(f"Player {attacker['pcount']} ({attacker['name']}) does NOTHING.")
 
 def rest(player):
     heal = 20 if player['energy'] == 0 else 25
