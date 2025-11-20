@@ -1,3 +1,5 @@
+import os, time
+
 moves = { 
     #name: energy, damage, heal
     "daggerSlash": [6, 10,0],
@@ -72,6 +74,7 @@ def getValidInput(player):
 #main
 playAgain = "Y"
 while playAgain == 'Y':
+    os.system('cls')
     print("Welcome Vampire Spawn!\n")
     print("Fight for the right to ascend into a Vampire lord")
     print("Attempt to knockout your opponent.")
@@ -90,10 +93,13 @@ while playAgain == 'Y':
         "pcount": 2
     }
     print(f"\nLet the duel between {player1['name']} and {player2['name']} begin!\n")
+    time.sleep(1)
 
+    os.system('cls')
     night = 0
     while player1['health'] > 0 and player2['health'] > 0:
         if night > 0 and night % 3 == 0:
+            os.system('cls')
             print("3 nights have passed. Both vampire spawns shall rest...")
             rest(player1)
             print("----------")
@@ -102,6 +108,7 @@ while playAgain == 'Y':
             input("\nPress any key to continue...")
             print()
         night += 1
+        os.system('cls')
         print(f"=== Night {night} ===")
         printBothStats(player1, player2)
 
@@ -123,11 +130,12 @@ while playAgain == 'Y':
 
         input("\nPress any key to continue...")
         print()
-
+    
+    os.system('cls')
     printBothStats(player1, player2)
 
     if player1['health'] == player2 ['health']:
-        print(f"Draw!")
+        print(f"Draw! As both {player1['name']} and {player2['name']} fail to ascend...")
     elif player1['health'] > player2['health']:
         print(f"Player 1 ({player1['name']}) wins! Player 1 ascends to a Vampire Lord...")
     else:
