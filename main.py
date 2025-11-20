@@ -49,9 +49,11 @@ def updateStats(player1, player2):
                         stats[key] = 0
 
                 elif stats[key] > 0:
-                    stats[key] -= 1
-                    playernum[key] += 1
-        
+                    if key == 'energy' and playernum[key] == 50:
+                        stats[key] = 0
+                    else: 
+                        stats[key] -= 1
+                        playernum[key] += 1
         animation.time.sleep(0.10)
     animation.restorepos()
     printBothStats(player1, player2, False)
