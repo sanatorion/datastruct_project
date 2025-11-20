@@ -34,6 +34,7 @@ def printStatus(player):
 
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
     damageVal = 0 if targetMove == 'C' else damageVal
+
     print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
     print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage.")
     attacker['energy'] = 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
@@ -80,7 +81,6 @@ def getValidInput(player):
     else:
         input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
         return 'E'
-
 #main
 playAgain = "Y"
 while playAgain == 'Y':
@@ -124,8 +124,8 @@ while playAgain == 'Y':
         
             input("\nPress any key to continue...")
             print()
-        night += 1
 
+        night += 1
         animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 1, False, True)
         printBothStats(player1, player2)
         
