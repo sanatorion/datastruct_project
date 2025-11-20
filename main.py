@@ -163,7 +163,7 @@ def getValidInput(player):
         return 'E'
     
 #==========MAIN=============
-pygame.mixer.music.load('sounds\menu.mp3')
+pygame.mixer.music.load('sounds/menu.mp3')
 pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play()
 print("======================")
@@ -202,7 +202,7 @@ while playAgain == 'Y':
     os.system('cls')
     night = 1
     round = 0
-    pygame.mixer.music.load('sounds\combat.mp3')
+    pygame.mixer.music.load('sounds/combat.mp3')
     pygame.mixer.music.set_volume(0.8)
     pygame.mixer.music.play(-1)
     while player1['health'] > 0 and player2['health'] > 0:
@@ -233,7 +233,6 @@ while playAgain == 'Y':
             os.system('cls')
 
         round += 1
-        player1['health'] = 1
         animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 0, True, True)
         animation.printPerChar(f"<-------> Round {round} <------->", False, 1, True, True)
         printBothStats(player1, player2, True)
