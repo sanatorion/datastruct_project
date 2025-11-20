@@ -1,4 +1,4 @@
-import os, time
+import os
 
 moves = { 
     #name: energy, damage, heal
@@ -9,30 +9,37 @@ moves = {
 }
 
 def printStatus(player):
+    
     for key, value in player.items():
+        symbol = '✚' if key == 'health' else '🗲'
         if key != 'pcount':
             if key == 'name':
                 print(f"{key.capitalize()}: ({value})")
             else:
-                print(f"{key.capitalize()}: {value}")
+                print(f"{symbol} {key.capitalize()}: {value}")
 
 def printBothStats(player1, player2):
-    print("==========")
-    print("Player Status\n----------")
+    print("=======Player Status=======")
     printStatus(player1)
-    print("----------")
+    print("---------------------------")
     printStatus(player2)
-    print("==========")
+    print("---------------------------")
         
 def applyEffects(attacker, target, attackerMove, targetMove, energyVal, damageVal, healVal):
+    movePerLetter = {'A' : 'DAGGER SLASH', 'B' : 'VAMPIRIC CLAWS', 'C' : 'DODGE: BAT FORM', 'D' : 'DRAIN LIFE'}
     damageVal = 0 if targetMove == 'C' else damageVal
-    print(f"Player {attacker['pcount']} ({attacker['name']}) uses {energyVal} energy.")
-    print(f"Player {target['pcount']} ({target['name']}) received {damageVal} damage.")
+
+    print(f"Player {attacker['pcount']} ({attacker['name']}) uses {movePerLetter[attackerMove]}.")
+    print(f"• Energy Used: {energyVal}")
+    if attackerMove != 'C': print(f"• Damage Dealt: {damageVal}")
     attacker['energy'] = 0 if attacker['energy'] < energyVal else attacker['energy'] - energyVal
     target['health'] -= damageVal
 
+    if target['health'] < 0:
+        target['health'] = 0
+
     if attackerMove == 'D' and targetMove != 'C':
-        print(f"Player {attacker['pcount']} ({attacker['name']}) gains {healVal} health.")
+        print(f"• Health Gained: {healVal}")
         attacker['health'] += healVal
 
 def moveEffects(attackerMove, targetMove, attacker, target):
@@ -59,6 +66,9 @@ def rest(player):
     player['health'] += heal
     player['energy'] += energy
 
+    if player['energy'] > 50:
+        player['energy'] = 50
+    
 def getValidInput(player):
     choices = ['A', 'B', 'C', 'D', 'E']
     if player['energy'] != 0:
@@ -72,51 +82,59 @@ def getValidInput(player):
         return 'E'
 
 #main
+print("Welcome Vampire Spawn!\n")
+print("Fight for the right to ascend into a Vampire lord")
+print("Attempt to knockout your opponent.")
+print("Use your vampiric moves to outsmart your opponent.")
+print("\nPlayers enter your names...")
+
+player1Name = input("Player 1: ")
+player2Name = input("Player 2: ")
+print()
 playAgain = "Y"
 while playAgain == 'Y':
-    os.system('cls')
-    print("Welcome Vampire Spawn!\n")
-    print("Fight for the right to ascend into a Vampire lord")
-    print("Attempt to knockout your opponent.")
-    print("Use your vampiric moves to outsmart your opponent.")
-    print("\nPlayers enter your names...")
+    print(f"Let the duel between {player1Name} and {player2Name} begin!\n")
     player1 = {
-        "name": input("Player 1: "),
+        "name": player1Name,
         "health": 100,
         "energy": 50,
         "pcount": 1
     }
     player2 = {
-        "name": input("Player 2: "),
+        "name": player2Name,
         "health": 100,
         "energy": 50,
         "pcount": 2
     }
-    print(f"\nLet the duel between {player1['name']} and {player2['name']} begin!\n")
-    time.sleep(1)
+    input("Press any key to continue...")
 
     os.system('cls')
-    night = 0
+    night = 1
+    round = 0
     while player1['health'] > 0 and player2['health'] > 0:
-        if night > 0 and night % 3 == 0:
+        if round == 3:
             os.system('cls')
-            print("3 nights have passed. Both vampire spawns shall rest...")
+            night += 1
+            round = 0
+            print("The night has passed. Both vampire spawns shall rest...\n")
             rest(player1)
             print("----------")
             rest(player2)
         
             input("\nPress any key to continue...")
             print()
-        night += 1
+
+        round += 1
         os.system('cls')
-        print(f"=== Night {night} ===")
+        print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
+        print(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯")
         printBothStats(player1, player2)
 
-        print("\nAvailable Moves:")
-        print(f"A. Dagger Slash ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})")
-        print(f"B. Vampiric Claws ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})")
-        print(f"C. Dodge: Bat Form (nullifies incoming attack; energy: {moves['dodge'][0]})")
-        print(f"D. Drain Life (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})")
+        print("\n======Available Moves======")
+        print(f"A. DAGGER SLASH ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})")
+        print(f"B. VAMPIRIC CLAWS ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})")
+        print(f"C. DODGE: BAT FORM (nullifies incoming attack; energy: {moves['dodge'][0]})")
+        print(f"D. DRAIN LIFE (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})")
         print("E. Do nothing (energy: 0)\n")
 
         print("Players, what are your moves? \nPlease enter A, B, C, D, or, E only")
@@ -124,7 +142,7 @@ while playAgain == 'Y':
         player2Move = getValidInput(player2)
 
         os.system('cls')
-        print("\nMove Effects:")
+        print("=======Moves Effects=======")
         moveEffects(player1Move, player2Move, player1, player2)
         print("----------")
         moveEffects(player2Move, player1Move, player2, player1)
@@ -144,4 +162,4 @@ while playAgain == 'Y':
 
     print("\nWould you like to Play Again?")
     playAgain = input("Type (Y) to Play Again: ")
-    print()
+    os.system('cls')
