@@ -136,7 +136,7 @@ def getValidInput(player):
 
             
     else:
-        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...", True, False, False, False)
+        animation.printPerChar(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...", False, 1, False, False)
         return 'E'
     
 #==========MAIN=============
@@ -149,9 +149,9 @@ while playAgain == 'Y':
     animation.time.sleep(1)
 
     animation.printPerChar("Welcome Vampire Spawn!\n", False, 1, True, True)
-    animation.printPerChar("Fight for the right to ascend into a Vampire lord.", True, 0, True, False)
-    animation.printPerChar("Attempt to knockout your opponent.", True, 0, True, False)
-    animation.printPerChar("Use your vampiric moves to outsmart your opponent.", True, 0, True, False)
+    animation.printPerChar("Fight for the right to ascend into a Vampire lord.", False, 0, True, True)
+    animation.printPerChar("Attempt to knockout your opponent.", False, 0, True, True)
+    animation.printPerChar("Use your vampiric moves to outsmart your opponent.", False, 0, True, True)
     print()
     animation.printPerChar("Players enter your names...", False, 0, False, True)
     player1 = {
@@ -169,11 +169,14 @@ while playAgain == 'Y':
     print()
     animation.printPerChar(f"Let the duel between {player1['name']} and {player2['name']} begin!", False, 1, False, True)
     os.system('cls')
-    night = 0
+    night = 1
+    round = 0
     while player1['health'] > 0 and player2['health'] > 0:
         os.system('cls')
-        if night > 0 and night % 3 == 0:
-            animation.printPerChar("3 nights have passed. Both vampire spawns shall rest...", False, 1, True, True)
+        if round == 3:
+            round = 0
+            night += 1
+            animation.printPerChar("The night ends. Both vampire spawns shall rest...", False, 1, True, True)
             print()
             animation.savepos()
             printBothStats(player1, player2, True)
@@ -195,8 +198,9 @@ while playAgain == 'Y':
             animation.time.sleep(1.5)
             os.system('cls')
 
-        night += 1
-        animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 1, False, True)
+        round += 1
+        animation.printPerChar(f"~ ☆ • ° . Night {night} . ° • ☆ ~", False, 0, False, True)
+        animation.printPerChar(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯", False, 1, False, True)
         printBothStats(player1, player2, True)
         
         animation.printPerLine( 0,
@@ -215,11 +219,13 @@ while playAgain == 'Y':
 
         os.system('cls')
         print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
+        print(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯")
         animation.savepos()
         printBothStats(player1, player2, False)
         animation.printPerChar("\n=======Moves Effects=======", False, 1, False, True)
 
         moveEffects(player1Move, player2Move, player1, player2, True) #player1
+        animation.time.sleep(delayPerStatResult)
         print("---------------------------")
         animation.time.sleep(1.5)
         if player1Move != 'E': 
@@ -246,6 +252,7 @@ while playAgain == 'Y':
     
     os.system('cls')
     print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
+    print(f"⎯⎯⎯⎯⎯⎯⎯⎯⎯ Round {round} ⎯⎯⎯⎯⎯⎯⎯⎯⎯")
     printBothStats(player1, player2, False)
     print()
     if player1['health'] == player2 ['health']:
