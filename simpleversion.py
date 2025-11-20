@@ -146,7 +146,7 @@ while playAgain == 'Y':
         os.system('cls')
         print("=======Moves Effects=======")
         moveEffects(player1Move, player2Move, player1, player2)
-        print("----------")
+        print("---------------------------")
         moveEffects(player2Move, player1Move, player2, player1)
 
         input("\nPress any key to continue...")
