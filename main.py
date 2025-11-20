@@ -1,7 +1,6 @@
 #group version
 
 import animation, os
-
 moves = { 
     #name: energy, damage, heal
     "daggerSlash": [6, 10,0],
