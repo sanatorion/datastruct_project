@@ -80,6 +80,21 @@ def getValidInput(player):
     else:
         input(f"Player {player['pcount']} ({player['name']}) has no more energy. Skipping this turn...")
         return 'E'
+    
+def printStatandChoices():
+    os.system('cls')
+    print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
+    print(f"<-------> Round {round} <------->")
+    printBothStats(player1, player2)
+
+    print("\n======Available Moves======")
+    print(f"A. DAGGER SLASH ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})")
+    print(f"B. VAMPIRIC CLAWS ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})")
+    print(f"C. DODGE: BAT FORM (nullifies incoming attack; energy: {moves['dodge'][0]})")
+    print(f"D. DRAIN LIFE (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})")
+    print("E. Do nothing (energy: 0)\n")
+
+    print("Players, what are your moves? \nPlease enter A, B, C, D, or, E only")    
 
 #main
 print("======================")
@@ -127,20 +142,9 @@ while playAgain == 'Y':
             input("\nPress any key to continue...")
 
         round += 1
-        os.system('cls')
-        print(f"~ ☆ • ° . Night {night} . ° • ☆ ~")
-        print(f"<-------> Round {round} <------->")
-        printBothStats(player1, player2)
-
-        print("\n======Available Moves======")
-        print(f"A. DAGGER SLASH ({moves['daggerSlash'][1]} damage; energy: {moves['daggerSlash'][0]})")
-        print(f"B. VAMPIRIC CLAWS ({moves['vampiricClaws'][1]} damage; energy: {moves['vampiricClaws'][0]})")
-        print(f"C. DODGE: BAT FORM (nullifies incoming attack; energy: {moves['dodge'][0]})")
-        print(f"D. DRAIN LIFE (deals {moves['drain'][1]} damage then heals self by {moves['drain'][2]}; energy: {moves['drain'][0]})")
-        print("E. Do nothing (energy: 0)\n")
-
-        print("Players, what are your moves? \nPlease enter A, B, C, D, or, E only")
+        printStatandChoices()
         player1Move = getValidInput(player1)
+        printStatandChoices()
         player2Move = getValidInput(player2)
 
         os.system('cls')
